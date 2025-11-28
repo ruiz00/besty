@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Birthday Surprise</title>
+    <style>
+        /* --- 1. Global Styles & Gradient Theme --- */
+        :root {
+            --primary: #ff7eb3;
+            --secondary: #ff758c;
+            --accent: #6a11cb;
+            --text: #fff;
+            --glass: rgba(7, 5, 10, 0.251);
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff7eb3, #8e44ad, #2575fc);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        h1, h2, h3 { font-weight: 300; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        
+        /* --- 2. Floating Hearts Animation --- */
+        .hearts-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .heart {
+            position: absolute;
+            bottom: -10vh;
+            font-size: 2rem;
+            animation: floatUp 10s linear infinite;
+            opacity: 0;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* --- 3. The Gatekeeper (Date Verification) --- */
+        #login-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            transition: opacity 1s ease;
+        }
+        .login-box {
+            background: var(--glass);
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+        input {
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            margin-top: 10px;
+            font-size: 1rem;
+            outline: none;
+            text-align: center;
+        }
+        button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: white;
+            color: var(--accent);
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        button:hover { transform: scale(1.05); }
+
+        /* --- 4. Main Content --- */
+        #main-content {
+            display: none; /* Hidden by default */
+            position: relative;
+            z-index: 10;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            text-align: center;
+            animation: fadeIn 2s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Photo Gallery */
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin: 40px 0;
+        }
+        .photo-card {
+            width: 150px;
+            height: 200px;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            transform: rotate(-5deg);
+            transition: transform 0.3s ease, z-index 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            cursor: pointer;
+        }
+        .photo-card img {
+            width: 100%;
+            height: 85%;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        .photo-card:nth-child(even) { transform: rotate(5deg); }
+        .photo-card:hover { transform: scale(1.2) rotate(0deg); z-index: 10; }
+
+        /* Surprise Message Cards */
+        .messages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 50px 0;
+        }
+        .msg-card {
+            background: var(--glass);
+            height: 150px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            perspective: 1000px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: transform 0.3s;
+        }
+        .msg-card:hover { transform: translateY(-5px); }
+        .msg-content {
+            padding: 20px;
+            display: none;
+            font-style: italic;
+        }
+        .msg-front { font-size: 2rem; }
+
+        /* Love Letter */
+        .love-letter {
+            background: rgba(255,255,255,0.9);
+            color: #333;
+            padding: 40px;
+            border-radius: 10px;
+            margin-top: 50px;
+            position: relative;
+            transform: rotate(-1deg);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            font-family: 'Georgia', serif;
+            line-height: 1.8;
+        }
+        .love-letter::before {
+            content: '♥';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 40px;
+            color: #ff758c;
+            background: #fff;
+            border-radius: 50%;
+            padding: 10px;
+        }
+
+        /* Pulse Animation */
+        .pulse { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+        /* Mobile Responsive */
+        @media (max-width: 600px) {
+            .gallery { gap: 10px; }
+            .photo-card { width: 100px; height: 140px; }
+            .love-letter { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hearts-container" id="hearts-bg"></div>
+
+    <div id="login-screen">
+        <div class="login-box">
+            <h2>🔒 Restricted Area</h2>
+            <p>Enter your birthday to unlock my heart (and this site)</p>
+            <input type="text" id="date-input" placeholder="DD/MM">
+            <br>
+            <button onclick="checkDate()">Unlock Surprise</button>
+            <p id="error-msg" style="color: #ff4d4d; display: none; margin-top: 10px;">Incorrect date, try again! ❤️</p>
+        </div>
+    </div>
+
+    <div id="main-content">
+        <h1 class="pulse">Happy Birthday, Besty! 🎉</h1>
+        <p>I built this little corner of the internet just for you.</p>
+
+        <div class="gallery">
+            <div class="photo-card"><img src="./besty.jpeg" alt="Memory"></div>
+            <div class="photo-card"><img src="./besty1.jpeg" alt="Memory"></div>
+            <div class="photo-card"><img src="./besty2.jpeg" alt="Memory"></div>
+            <div class="photo-card"><img src="./besty3.jpeg" alt="Memory"></div>
+            <div class="photo-card"><img src="https://images.unsplash.com/photo-1494774157365-9e04c6720e47?auto=format&fit=crop&w=400" alt="Memory"></div>
+        </div>
+
+        <h3>Tap a card to reveal a reason why you are my besty...</h3>
+        <div class="messages-grid">
+            <div class="msg-card" onclick="revealMsg(this)">
+                <span class="msg-front">🎁</span>
+                <span class="msg-content">Hg </span>
+            </div>
+            <div class="msg-card" onclick="revealMsg(this)">
+                <span class="msg-front">🎂</span>
+                <span class="msg-content">le soutien (mes histoires) sont pas facile a attendre.</span>
+            </div>
+            <div class="msg-card" onclick="revealMsg(this)">
+                <span class="msg-front">🎈</span>
+                <span class="msg-content">Nos delire prives.</span>
+            </div>
+            <div class="msg-card" onclick="revealMsg(this)">
+                <span class="msg-front">✨</span>
+                <span class="msg-content">Et enfin l'honnetete brutale</span>
+            </div>
+        </div>
+
+        <div class="love-letter">
+            <h3>My Dearest Homegirl,</h3>
+            <p>Happy Birthday !! 🎉 Juste un petit message pour te rappeler que tu es la meilleure chose qui me soit arrivée (merci le destin !). Même si on est loin l'un de l'autre aujourd'hui,c'est une chance incroyable de t'avoir comme amie. Profite à fond de ta journée, tu le mérites tellement. Rentres vite ! ❤️"</p>
+            <p>
+                Here is to another year of making memories together.
+            </p>
+            <p><strong>With all my love,<br>Your HB ❤️</strong></p>
+        </div>
+    </div>
+
+    <script>
+        // --- Configuration ---
+        const CORRECT_DATE = "28/11"; 
+
+        // --- Logic ---
+        function checkDate() {
+            const input = document.getElementById('date-input').value.trim();
+            const errorMsg = document.getElementById('error-msg');
+            const loginScreen = document.getElementById('login-screen');
+            const mainContent = document.getElementById('main-content');
+            const bgAudio = document.getElementById('bg-music');
+
+            if (input === CORRECT_DATE) {
+                // Success Animation
+                loginScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loginScreen.style.display = 'none';
+                    mainContent.style.display = 'block';
+                    createHearts(); // Start heart animation
+                }, 1000);
+            } else {
+                // Error Shake
+                errorMsg.style.display = 'block';
+                loginScreen.classList.add('shake');
+                setTimeout(() => loginScreen.classList.remove('shake'), 500);
+            }
+        }
+
+        function revealMsg(card) {
+            const front = card.querySelector('.msg-front');
+            const content = card.querySelector('.msg-content');
+            
+            if (front.style.display !== 'none') {
+                front.style.display = 'none';
+                content.style.display = 'block';
+                card.style.background = 'rgba(255,255,255,0.9)';
+                card.style.color = '#333';
+            }
+        }
+
+        // Generate Floating Hearts
+        function createHearts() {
+            const container = document.getElementById('hearts-bg');
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.classList.add('heart');
+                heart.innerHTML = '❤️';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = Math.random() * 3 + 5 + 's';
+                heart.style.fontSize = Math.random() * 20 + 20 + 'px';
+                container.appendChild(heart);
+                
+                // Cleanup
+                setTimeout(() => {
+                    heart.remove();
+                }, 8000);
+            }, 300);
+        }
+    </script>
+</body>
+</html>
